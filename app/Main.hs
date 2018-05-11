@@ -5,7 +5,12 @@ import Lib
 import Control.Monad.Loops (whileM_)
 
 main :: IO ()
-main = whileM_ interpreter (putStrLn "staying alive")
+main = whileM_ interpreter $ pure ()
+
+execute :: String -> IO ()
+execute "put" = putStrLn "putting value"
+execute "get" = putStrLn "getting value"
+execute other = putStrLn $ "You just entered " ++ other
 
 interpreter :: IO Bool
 interpreter = do
@@ -14,5 +19,7 @@ interpreter = do
         then do
             putStrLn "bye"
             pure False
-        else pure True
+        else do
+            execute line
+            pure True
 
