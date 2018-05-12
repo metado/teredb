@@ -2,19 +2,21 @@ module Main where
 
 import Lib
 
+import System.Exit
 import Data.List
-import Control.Monad.Loops (whileM_)
 
 data Command = Get String | Put String String | Exit
 
+database :: String
 database = "database.txt"
 
 main :: IO ()
-main = whileM_ interpreter $ pure ()
+main = sequence_ $ repeat interpreter
 
 execute :: Command -> IO ()
 execute (Get key) = get key
 execute (Put key value) = put key value
+execute Exit = putStrLn "Bye!" >> exitWith ExitSuccess
 
 parseCommand :: String -> Either String Command
 parseCommand command = case words command of ["get", key] -> Right $ Get key
@@ -22,18 +24,13 @@ parseCommand command = case words command of ["get", key] -> Right $ Get key
                                              ["exit"] -> Right Exit
                                              other -> Left $ intercalate " " other
 
-interpreter :: IO Bool
+interpreter :: IO ()
 interpreter = do
     line <- getLine
-    case parseCommand line of Right Exit -> do
-                                putStrLn "bye"
-                                pure False
-                              Right command -> do
+    case parseCommand line of Right command -> do
                                 execute command
-                                pure True
                               Left unknown -> do
-                                putStrLn $ "Unknown command " ++ unknown ++ ". Aborting!"
-                                pure False
+                                putStrLn $ "Unknown command " ++ unknown
 
 put :: String -> String -> IO ()
 put key value = appendFile database (key ++ "\t" ++ value ++ "\n")
