@@ -1,9 +1,13 @@
 # teredb
 
-### TODO
+Dead simple SSTable implementation in Haskell.
 
-- [ ] CLI accepting path to DB file
-- [ ] Parser for commands
-- [ ] Interactive iterface with `get` and `put`
-- [ ] `get :: String -> IO Maybe String`
-- [ ] `put :: String -> String -> IO ()`
+## Quickstart
+
+Assuming Docker is installed and we're in `teredb` directory.
+
+```bash
+$ docker build -t teredb:0.0.1 .
+$ docker run -it --mount type=bind,source="$(pwd)",target=/app --rm teredb:0.0.1
+$ cd /app && stack ghci
+```
