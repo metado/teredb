@@ -6,6 +6,7 @@ module Lib
     ) where
 
 import Data.List
+import Safe (lastMay)
 
 data Command = Get String | Put String String | Exit
 
@@ -18,7 +19,7 @@ get :: Config -> String -> IO ()
 get (Config database) key = do
     content <- readFile database
     let linesOfFiles = fmap words $ lines content
-    print $ find (searchByKey key) linesOfFiles
+    print $ lastMay $ filter (searchByKey key) linesOfFiles
 
 searchByKey :: String -> [String] -> Bool
 searchByKey key kvs = case kvs of h : _ -> h == key
